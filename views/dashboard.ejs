@@ -1,0 +1,118 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Dashboard</h1>
+    <p style="color: #666; margin-bottom: 30px;">Overview of your application</p>
+    
+    <!-- Statistics Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <h3 style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">TOTAL USERS</h3>
+            <p style="font-size: 36px; font-weight: bold; margin: 0;"><%= stats.totalUsers %></p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <h3 style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">TOTAL CONTACTS</h3>
+            <p style="font-size: 36px; font-weight: bold; margin: 0;"><%= stats.totalContacts %></p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <h3 style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">PENDING</h3>
+            <p style="font-size: 36px; font-weight: bold; margin: 0;"><%= stats.pendingContacts %></p>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+            <h3 style="font-size: 14px; opacity: 0.9; margin-bottom: 10px;">REVIEWED</h3>
+            <p style="font-size: 36px; font-weight: bold; margin: 0;"><%= stats.reviewedContacts %></p>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px;">
+        <!-- Recent Registrations -->
+        <div>
+            <h2 style="color: #333; margin-bottom: 20px; font-size: 20px;">Recent Registrations</h2>
+            <% if (recentRegistrations.length === 0) { %>
+                <p style="color: #999;">No registrations yet</p>
+            <% } else { %>
+                <div style="background: #f8f9fa; border-radius: 10px; overflow: hidden;">
+                    <% recentRegistrations.forEach((user, index) => { %>
+                        <div style="padding: 15px; border-bottom: <%= index < recentRegistrations.length - 1 ? '1px solid #e0e0e0' : 'none' %>;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0; color: #333;"><%= user.fullName %></h4>
+                                    <p style="margin: 0; color: #666; font-size: 14px;"><%= user.email %></p>
+                                </div>
+                                <a href="/users/<%= user.id %>" style="color: #667eea; text-decoration: none; font-weight: 600; font-size: 14px;">
+                                    View →
+                                </a>
+                            </div>
+                            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">
+                                <%= new Date(user.registeredAt).toLocaleString() %>
+                            </p>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+            <a href="/users" style="display: inline-block; margin-top: 15px; color: #667eea; text-decoration: none; font-weight: 600;">
+                View All Users →
+            </a>
+        </div>
+        
+        <!-- Recent Contacts -->
+        <div>
+            <h2 style="color: #333; margin-bottom: 20px; font-size: 20px;">Recent Contact Messages</h2>
+            <% if (recentContacts.length === 0) { %>
+                <p style="color: #999;">No contact messages yet</p>
+            <% } else { %>
+                <div style="background: #f8f9fa; border-radius: 10px; overflow: hidden;">
+                    <% recentContacts.forEach((contact, index) => { %>
+                        <div style="padding: 15px; border-bottom: <%= index < recentContacts.length - 1 ? '1px solid #e0e0e0' : 'none' %>;">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <h4 style="margin: 0 0 5px 0; color: #333;"><%= contact.name %></h4>
+                                    <p style="margin: 0 0 5px 0; color: #666; font-size: 14px;"><strong>Subject:</strong> <%= contact.subject %></p>
+                                    <p style="margin: 0; color: #666; font-size: 13px; line-height: 1.4;">
+                                        <%= contact.message.substring(0, 80) %><%= contact.message.length > 80 ? '...' : '' %>
+                                    </p>
+                                </div>
+                                <span style="background: 
+                                    <%= contact.status === 'pending' ? '#ffc107' : contact.status === 'reviewed' ? '#007bff' : '#28a745' %>; 
+                                    color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; margin-left: 10px;">
+                                    <%= contact.status.toUpperCase() %>
+                                </span>
+                            </div>
+                            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">
+                                <%= new Date(contact.submittedAt).toLocaleString() %>
+                            </p>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } %>
+            <a href="/contacts" style="display: inline-block; margin-top: 15px; color: #667eea; text-decoration: none; font-weight: 600;">
+                View All Contacts →
+            </a>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div style="margin-top: 40px; padding: 25px; background: #f8f9fa; border-radius: 10px;">
+        <h2 style="color: #333; margin-bottom: 20px; font-size: 20px;">Quick Actions</h2>
+        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <a href="/register" style="background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                ➕ Add New User
+            </a>
+            <a href="/users" style="background: #764ba2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                👥 View All Users
+            </a>
+            <a href="/contacts" style="background: #f5576c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                📧 View Messages
+            </a>
+            <a href="/api/registrations" style="background: #4facfe; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">
+                📊 API Data
+            </a>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

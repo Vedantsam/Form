@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1>Registered Users</h1>
+    <p class="text-muted mb-20">Total: <%= totalUsers %> users</p>
+    
+    <% if (users.length === 0) { %>
+        <p class="text-center text-muted" style="padding: 40px;">No users registered yet.</p>
+    <% } else { %>
+        <div>
+            <% users.forEach(user => { %>
+                <div class="user-card">
+                    <h3><%= user.fullName %></h3>
+                    <p><strong>Email:</strong> <%= user.email %></p>
+                    <p><strong>Country:</strong> <%= user.country %></p>
+                    <% if (user.interests && user.interests.length > 0) { %>
+                        <p><strong>Interests:</strong> <%= user.interests.join(', ') %></p>
+                    <% } %>
+                    <p class="timestamp">
+                        Registered: <%= new Date(user.registeredAt).toLocaleDateString() %>
+                    </p>
+                    <a href="/users/<%= user.id %>" class="view-link">
+                        View Details →
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+    <% } %>
+</div>
+
+<%- include('partials/footer') %>

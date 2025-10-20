@@ -1,0 +1,58 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <h1><%= user.fullName %></h1>
+    
+    <div style="background: #f8f9fa; padding: 30px; border-radius: 10px; margin-top: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div>
+                <h3 style="color: #667eea; margin-bottom: 10px;">Contact Information</h3>
+                <p><strong>Email:</strong> <%= user.email %></p>
+                <% if (user.phone) { %>
+                    <p><strong>Phone:</strong> <%= user.phone %></p>
+                <% } %>
+            </div>
+            
+            <div>
+                <h3 style="color: #667eea; margin-bottom: 10px;">Personal Details</h3>
+                <% if (user.age) { %>
+                    <p><strong>Age:</strong> <%= user.age %></p>
+                <% } %>
+                <% if (user.gender) { %>
+                    <p><strong>Gender:</strong> <%= user.gender %></p>
+                <% } %>
+                <p><strong>Country:</strong> <%= user.country %></p>
+            </div>
+        </div>
+        
+        <% if (user.interests && user.interests.length > 0) { %>
+            <div style="margin-top: 20px;">
+                <h3 style="color: #667eea; margin-bottom: 10px;">Interests</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <% user.interests.forEach(interest => { %>
+                        <span style="background: #667eea; color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px;">
+                            <%= interest %>
+                        </span>
+                    <% }); %>
+                </div>
+            </div>
+        <% } %>
+        
+        <% if (user.bio) { %>
+            <div style="margin-top: 20px;">
+                <h3 style="color: #667eea; margin-bottom: 10px;">Bio</h3>
+                <p style="line-height: 1.6;"><%= user.bio %></p>
+            </div>
+        <% } %>
+        
+        <p style="color: #999; font-size: 14px; margin-top: 20px;">
+            Registered on <%= new Date(user.registeredAt).toLocaleString() %>
+        </p>
+    </div>
+    
+    <a href="/users" style="display: inline-block; margin-top: 20px; color: #667eea; text-decoration: none; font-weight: 600;">
+        ← Back to Users
+    </a>
+</div>
+
+<%- include('partials/footer') %>

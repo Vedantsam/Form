@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Form with Complex Interactions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .form-body {
+            padding: 40px;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .step-description {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        input[type="url"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input.error,
+        select.error,
+        textarea.error {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+
+        .strength-weak { background: #e74c3c; width: 33%; }
+        .strength-medium { background: #f39c12; width: 66%; }
+        .strength-strong { background: #27ae60; width: 100%; }
+
+        .strength-text {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .checkbox-group,
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item,
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover,
+        .radio-item:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .checkbox-item input,
+        .radio-item input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .file-upload {
+            border: 2px dashed #e0e0e0;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+
+        .file-item button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 50px;
+            cursor: text;
+        }
+
+        .tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+        }
+
+        .tags-input input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 120px;
+            padding: 5px;
+        }
+
+        .slider-container {
+            padding: 10px 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .summary-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .summary-value {
+            color: #333;
+        }
+
+        .success-screen {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .success-screen.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .dynamic-fields {
+            margin-top: 15px;
+        }
+
+        .dynamic-field {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .dynamic-field input {
+            flex: 1;
+        }
+
+        .btn-add {
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-remove {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .autocomplete-suggestions {
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            position: absolute;
+            background: white;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .autocomplete-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background: #f8f9fa;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            cursor: pointer;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h1>Advanced Registration Form</h1>
+            <p>Complete all steps to finish registration</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="form-body">
+            <form id="advancedForm">
+                <!-- Step 1: Personal Information -->
+                <div class="form-step active" data-step="1">
+                    <h2 class="step-title">Step 1: Personal Information</h2>
+                    <p class="step-description">Let's start with your basic details</p>
+
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label>First Name <span class="required">*</span></label>
+                            <input type="text" id="firstName" name="firstName" required onblur="validateRequired('firstName','firstNameError')" oninput="clearError('firstNameError', this)">
+                            <span class="error-message" id="firstNameError">First name is required</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Last Name <span class="required">*</span></label>
+                            <input type="text" id="lastName" name="lastName" required onblur="validateRequired('lastName','lastNameError')" oninput="clearError('lastNameError', this)">
+                            <span class="error-message" id="lastNameError">Last name is required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email Address <span class="required">*</span>
+                            <span class="tooltip">ℹ️
+                                <span class="tooltiptext">We'll send a verification email to this address</span>
+                            </span>
+                        </label>
+                        <input type="email" id="email" name="email" required onblur="validateEmail()" oninput="validateEmail()">
+                        <span class="error-message" id="emailError">Please enter a valid email</span>
+                        <span class="success-message" id="emailSuccess">✓ Email is valid</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number <span class="required">*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (123) 456-7890" required oninput="formatPhone(); clearError('phoneError', this)">
+                        <span class="error-message" id="phoneError">Please enter a valid phone number</span>
+                    </div>
+
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label>Date of Birth <span class="required">*</span></label>
+                            <input type="date" id="dob" name="dob" required onchange="validateAge()">
+                            <span class="error-message" id="dobError">You must be at least 18 years old</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select id="gender" name="gender">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Account Setup -->
+                <div class="form-step" data-step="2">
+                    <h2 class="step-title">Step 2: Account Setup</h2>
+                    <p class="step-description">Create your secure account</p>
+
+                    <div class="form-group">
+                        <label>Username <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="text" id="username" name="username" required onblur="checkUsername()" oninput="clearError('usernameError', this)">
+                            <span class="input-icon" id="usernameCheck">⏳</span>
+                        </div>
+                        <span class="error-message" id="usernameError">Username must be 3-20 characters</span>
+                        <span class="success-message" id="usernameSuccess">✓ Username is available</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password <span class="required">*</span></label>
+                        <div class="input-with-icon">
+                            <input type="password" id="password" name="password" required oninput="checkPasswordStrength(); checkPasswordMatch()">
+                            <span class="input-icon" id="togglePassword">👁️</span>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthBar"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText">Password strength: None</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirm Password <span class="required">*</span></label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required oninput="checkPasswordMatch()">
+                        <span class="error-message" id="confirmPasswordError">Passwords do not match</span>
+                        <span class="success-message" id="confirmPasswordSuccess">✓ Passwords match</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Security Question</label>
+                        <select id="securityQuestion" name="securityQuestion">
+                            <option value="">Select a question</option>
+                            <option value="pet">What was your first pet's name?</option>
+                            <option value="city">In what city were you born?</option>
+                            <option value="school">What was the name of your elementary school?</option>
+                            <option value="friend">What is your best friend's name?</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Security Answer</label>
+                        <input type="text" id="securityAnswer" name="securityAnswer">
+                    </div>
+                </div>
+
+                <!-- Step 3: Professional Details -->
+                <div class="form-step" data-step="3">
+                    <h2 class="step-title">Step 3: Professional Details</h2>
+                    <p class="step-description">Tell us about your professional background</p>
+
+                    <div class="form-group">
+                        <label>Current Occupation <span class="required">*</span></label>
+                        <input type="text" id="occupation" name="occupation" required onblur="validateRequired('occupation')">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Company/Organization</label>
+                        <input type="text" id="company" name="company">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Years of Experience</label>
+                        <div class="slider-container">
+                            <input type="range" id="experience" name="experience" min="0" max="50" value="0" class="slider">
+                            <div class="slider-value"><span id="experienceValue">0</span> years</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Skills (Press Enter to add)</label>
+                        <div class="tags-input" id="skillsInput">
+                            <input type="text" id="skillInput" placeholder="Type and press Enter">
+                        </div>
+                        <input type="hidden" id="skills" name="skills">
+                    </div>
+
+                    <div class="form-group">
+                        <label>LinkedIn Profile</label>
+                        <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Portfolio/Website</label>
+                        <input type="url" id="portfolio" name="portfolio" placeholder="https://yourwebsite.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Education Level</label>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="education" value="high-school">
+                                <span>High School</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="education" value="bachelors">
+                                <span>Bachelor's Degree</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="education" value="masters">
+                                <span>Master's Degree</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="education" value="phd">
+                                <span>PhD/Doctorate</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Preferences & Interests -->
+                <div class="form-step" data-step="4">
+                    <h2 class="step-title">Step 4: Preferences & Interests</h2>
+                    <p class="step-description">Help us personalize your experience</p>
+
+                    <div class="form-group">
+                        <label>Interests <span class="required">*</span></label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="interests" value="technology" onclick="validateStep4()">
+                                <span>Technology & Programming</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="interests" value="design" onclick="validateStep4()">
+                                <span>Design & Creativity</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="interests" value="business" onclick="validateStep4()">
+                                <span>Business & Marketing</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="interests" value="science" onclick="validateStep4()">
+                                <span>Science & Research</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="interests" value="arts" onclick="validateStep4()">
+                                <span>Arts & Entertainment</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="interests" value="sports" onclick="validateStep4()">
+                                <span>Sports & Fitness</span>
+                            </label>
+                        </div>
+                        <span class="error-message" id="interestsError">Please select at least one interest</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>About You</label>
+                        <textarea id="bio" name="bio" rows="5" maxlength="500" placeholder="Tell us about yourself..."></textarea>
+                        <div class="char-counter"><span id="charCount">0</span>/500</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Upload Profile Picture</label>
+                        <div class="file-upload" id="fileUpload">
+                            <div class="file-upload-icon">📁</div>
+                            <p>Click to upload or drag and drop</p>
+                            <p style="font-size: 12px; color: #999;">PNG, JPG up to 5MB</p>
+                            <input type="file" id="profilePic" name="profilePic" accept="image/*" style="display: none;">
+                        </div>
+                        <div class="file-list" id="fileList"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Newsletter Preferences</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="newsletter" value="weekly">
+                                <span>Weekly Newsletter</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="newsletter" value="promotions">
+                                <span>Promotional Emails</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="newsletter" value="updates">
+                                <span>Product Updates</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Review & Submit -->
+                <div class="form-step" data-step="5">
+                    <h2 class="step-title">Step 5: Review Your Information</h2>
+                    <p class="step-description">Please review your details before submitting</p>
+
+                    <div class="summary-card">
+                        <h3>Personal Information</h3>
+                        <div class="summary-item">
+                            <span class="summary-label">Name:</span>
+                            <span class="summary-value" id="summaryName">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Email:</span>
+                            <span class="summary-value" id="summaryEmail">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Phone:</span>
+                            <span class="summary-value" id="summaryPhone">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Date of Birth:</span>
+                            <span class="summary-value" id="summaryDob">-</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <h3>Account Details</h3>
+                        <div class="summary-item">
+                            <span class="summary-label">Username:</span>
+                            <span class="summary-value" id="summaryUsername">-</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <h3>Professional Details</h3>
+                        <div class="summary-item">
+                            <span class="summary-label">Occupation:</span>
+                            <span class="summary-value" id="summaryOccupation">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Experience:</span>
+                            <span class="summary-value" id="summaryExperience">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Skills:</span>
+                            <span class="summary-value" id="summarySkills">-</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="terms" name="terms" required onchange="hideError('termsError')">
+                            <span>I agree to the <a href="#" style="color: #667eea;">Terms and Conditions</a> and <a href="#" style="color: #667eea;">Privacy Policy</a></span>
+                        </label>
+                        <span class="error-message" id="termsError">You must agree to continue</span>
+                    </div>
+                </div>
+
+                <!-- Success Screen -->
+                <div class="success-screen" id="successScreen">
+                    <div class="success-icon">🎉</div>
+                    <h2>Registration Successful!</h2>
+                    <p style="color: #666; margin: 20px 0;">Thank you for registering. We've sent a verification email to your address.</p>
+                    <button type="button" class="btn-primary" onclick="location.reload()">Register Another User</button>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="button-group" id="navigationButtons">
+                    <button type="button" class="btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display: none;">Previous</button>
+                    <button type="button" class="btn-primary" id="nextBtn" onclick="changeStep(1)">Next</button>
+                    <button type="submit" class="btn-primary" id="submitBtn" style="display: none;">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 5;
+        const skills = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Email validation
+            document.getElementById('email').addEventListener('blur', validateEmail);
+            
+            // Phone formatting
+            document.getElementById('phone').addEventListener('input', formatPhone);
+            
+            // Password strength
+            document.getElementById('password').addEventListener('input', checkPasswordStrength);
+            
+            // Confirm password
+            document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
+            
+            // Toggle password visibility
+            document.getElementById('togglePassword').addEventListener('click', togglePassword);
+            
+            // Username availability
+            document.getElementById('username').addEventListener('blur', checkUsername);
+            
+            // Experience slider
+            document.getElementById('experience').addEventListener('input', function() {
+                document.getElementById('experienceValue').textContent = this.value;
+            });
+            
+            // Skills tags
+            document.getElementById('skillInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addSkillTag();
+                }
+            });
+            
+            // Character counter
+            document.getElementById('bio').addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length;
+            });
+            
+            // File upload
+            const fileUpload = document.getElementById('fileUpload');
+            const fileInput = document.getElementById('profilePic');
+            
+            fileUpload.addEventListener('click', () => fileInput.click());
+            
+            fileUpload.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUpload.style.borderColor = '#667eea';
+            });
+            
+            fileUpload.addEventListener('dragleave', () => {
+                fileUpload.style.borderColor = '#e0e0e0';
+            });
+            
+            fileUpload.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUpload.style.borderColor = '#e0e0e0';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+            
+            // Date of birth validation
+            document.getElementById('dob').addEventListener('change', validateAge);
+            
+            // Form submission
+            document.getElementById('advancedForm').addEventListener('submit', handleSubmit);
+        }
+
+        function changeStep(direction) {
+            if (direction === 1 && !validateCurrentStep()) {
+                return;
+            }
+            
+            const steps = document.querySelectorAll('.form-step');
+            steps[currentStep - 1].classList.remove('active');
+            
+            currentStep += direction;
+            
+            if (currentStep > totalSteps) {
+                currentStep = totalSteps;
+                return;
+            }
+            
+            steps[currentStep - 1].classList.add('active');
+            updateProgress();
+            updateNavigationButtons();
+            
+            if (currentStep === totalSteps) {
+                updateSummary();
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateProgress() {
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+            
+            if (currentStep === totalSteps) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            }
+        }
+
+        function validateCurrentStep() {
+            let isValid = true;
+            
+            if (currentStep === 1) {
+                isValid = validateStep1();
+            } else if (currentStep === 2) {
+                isValid = validateStep2();
+            } else if (currentStep === 3) {
+                isValid = validateStep3();
+            } else if (currentStep === 4) {
+                isValid = validateStep4();
+            }
+            
+            return isValid;
+        }
+
+        function validateStep1() {
+            let isValid = true;
+            
+            const firstName = document.getElementById('firstName');
+            if (!firstName.value.trim()) {
+                showError('firstNameError');
+                firstName.classList.add('error');
+                isValid = false;
+            } else {
+                hideError('firstNameError');
+                firstName.classList.remove('error');
+            }
+            
+            const lastName = document.getElementById('lastName');
+            if (!lastName.value.trim()) {
+                showError('lastNameError');
+                lastName.classList.add('error');
+                isValid = false;
+            } else {
+                hideError('lastNameError');
+                lastName.classList.remove('error');
+            }
+            
+            const email = document.getElementById('email');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email.value)) {
+                showError('emailError');
+                email.classList.add('error');
+                isValid = false;
+            } else {
+                hideError('emailError');
+                email.classList.remove('error');
+            }
+            
+            const phone = document.getElementById('phone');
+            if (!phone.value.trim()) {
+                showError('phoneError');
+                phone.classList.add('error');
+                isValid = false;
+            } else {
+                hideError('phoneError');
+                phone.classList.remove('error');
+            }
+            
+            const dob = document.getElementById('dob');
+            if (!dob.value) {
+                showError('dobError');
+                dob.classList.add('error');
+                isValid = false;
+            } else if (!validateAge()) {
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        function validateStep2() {
+            let isValid = true;
+            
+            const username = document.getElementById('username');
+            if (username.value.length < 3 || username.value.length > 20) {
+                showError('usernameError');
+                username.classList.add('error');
+                isValid = false;
+            } else {
+                hideError('usernameError');
+                username.classList.remove('error');
+            }
+            
+            const password = document.getElementById('password');
+            if (password.value.length < 8) {
+                alert('Password must be at least 8 characters long');
+                isValid = false;
+            }
+            
+            const confirmPassword = document.getElementById('confirmPassword');
+            if (password.value !== confirmPassword.value) {
+                showError('confirmPasswordError');
+                confirmPassword.classList.add('error');
+                isValid = false;
+            } else {
+                hideError('confirmPasswordError');
+                confirmPassword.classList.remove('error');
+            }
+            
+            return isValid;
+        }
+
+        function validateStep3() {
+            const occupation = document.getElementById('occupation');
+            if (!occupation.value.trim()) {
+                occupation.classList.add('error');
+                alert('Please enter your occupation');
+                return false;
+            }
+            occupation.classList.remove('error');
+            return true;
+        }
+
+        function validateStep4() {
+            const interests = document.querySelectorAll('input[name="interests"]:checked');
+            if (interests.length === 0) {
+                showError('interestsError');
+                return false;
+            }
+            hideError('interestsError');
+            return true;
+        }
+
+        function validateEmail() {
+            const email = document.getElementById('email');
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (emailPattern.test(email.value)) {
+                hideError('emailError');
+                document.getElementById('emailSuccess').classList.add('show');
+                email.classList.remove('error');
+            } else {
+                showError('emailError');
+                document.getElementById('emailSuccess').classList.remove('show');
+                email.classList.add('error');
+            }
+        }
+
+        function formatPhone() {
+            let phone = document.getElementById('phone');
+            let value = phone.value.replace(/\D/g, '');
+            
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    value = value;
+                } else if (value.length <= 6) {
+                    value = '(' + value.slice(0, 3) + ') ' + value.slice(3);
+                } else {
+                    value = '(' + value.slice(0, 3) + ') ' + value.slice(3, 6) + '-' + value.slice(6, 10);
+                }
+            }
+            
+            phone.value = value;
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+            
+            strengthBar.className = 'strength-fill';
+            
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+                strengthText.textContent = 'Password strength: Weak';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+                strengthText.textContent = 'Password strength: Medium';
+            } else {
+                strengthBar.classList.add('strength-strong');
+                strengthText.textContent = 'Password strength: Strong';
+            }
+        }
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (confirmPassword.length > 0) {
+                if (password === confirmPassword) {
+                    hideError('confirmPasswordError');
+                    document.getElementById('confirmPasswordSuccess').classList.add('show');
+                    document.getElementById('confirmPassword').classList.remove('error');
+                } else {
+                    showError('confirmPasswordError');
+                    document.getElementById('confirmPasswordSuccess').classList.remove('show');
+                    document.getElementById('confirmPassword').classList.add('error');
+                }
+            }
+        }
+
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const icon = document.getElementById('togglePassword');
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.textContent = '🙈';
+            } else {
+                password.type = 'password';
+                icon.textContent = '👁️';
+            }
+        }
+
+        function checkUsername() {
+            const username = document.getElementById('username').value;
+            const icon = document.getElementById('usernameCheck');
+            
+            if (username.length >= 3 && username.length <= 20) {
+                // Simulate API call
+                setTimeout(() => {
+                    icon.textContent = '✓';
+                    icon.style.color = '#27ae60';
+                    document.getElementById('usernameSuccess').classList.add('show');
+                    hideError('usernameError');
+                    document.getElementById('username').classList.remove('error');
+                }, 500);
+            } else {
+                icon.textContent = '✗';
+                icon.style.color = '#e74c3c';
+                showError('usernameError');
+                document.getElementById('usernameSuccess').classList.remove('show');
+            }
+        }
+
+        function addSkillTag() {
+            const input = document.getElementById('skillInput');
+            const skill = input.value.trim();
+            
+            if (skill && !skills.includes(skill)) {
+                skills.push(skill);
+                
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    <span>${skill}</span>
+                    <button type="button" onclick="removeSkill('${skill}')">×</button>
+                `;
+                
+                const skillsInput = document.getElementById('skillsInput');
+                skillsInput.insertBefore(tag, input);
+                
+                input.value = '';
+                document.getElementById('skills').value = skills.join(',');
+            }
+        }
+
+        function removeSkill(skill) {
+            const index = skills.indexOf(skill);
+            if (index > -1) {
+                skills.splice(index, 1);
+            }
+            
+            const tags = document.querySelectorAll('.tag');
+            tags.forEach(tag => {
+                if (tag.textContent.includes(skill)) {
+                    tag.remove();
+                }
+            });
+            
+            document.getElementById('skills').value = skills.join(',');
+        }
+
+        function handleFile(file) {
+            if (file.type.startsWith('image/')) {
+                const fileList = document.getElementById('fileList');
+                fileList.innerHTML = `
+                    <div class="file-item">
+                        <span>📷 ${file.name} (${(file.size / 1024).toFixed(2)} KB)</span>
+                        <button type="button" onclick="removeFile()">Remove</button>
+                    </div>
+                `;
+            } else {
+                alert('Please upload an image file');
+            }
+        }
+
+        function removeFile() {
+            document.getElementById('fileList').innerHTML = '';
+            document.getElementById('profilePic').value = '';
+        }
+
+        function validateAge() {
+            const dob = document.getElementById('dob').value;
+            if (!dob) return false;
+            
+            const birthDate = new Date(dob);
+            const today = new Date();
+            const age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            
+            if (age < 18) {
+                showError('dobError');
+                document.getElementById('dob').classList.add('error');
+                return false;
+            }
+            
+            hideError('dobError');
+            document.getElementById('dob').classList.remove('error');
+            return true;
+        }
+
+        function updateSummary() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            document.getElementById('summaryName').textContent = `${firstName} ${lastName}`;
+            
+            document.getElementById('summaryEmail').textContent = document.getElementById('email').value;
+            document.getElementById('summaryPhone').textContent = document.getElementById('phone').value;
+            document.getElementById('summaryDob').textContent = document.getElementById('dob').value;
+            document.getElementById('summaryUsername').textContent = document.getElementById('username').value;
+            document.getElementById('summaryOccupation').textContent = document.getElementById('occupation').value || 'Not specified';
+            
+            const experience = document.getElementById('experience').value;
+            document.getElementById('summaryExperience').textContent = experience + ' years';
+            
+            document.getElementById('summarySkills').textContent = skills.length > 0 ? skills.join(', ') : 'None added';
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            const terms = document.getElementById('terms');
+            if (!terms.checked) {
+                showError('termsError');
+                terms.classList.add('error');
+                return;
+            }
+            
+            // Collect all form data
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Add skills
+            data.skills = skills;
+            
+            // Add interests
+            const interests = [];
+            document.querySelectorAll('input[name="interests"]:checked').forEach(checkbox => {
+                interests.push(checkbox.value);
+            });
+            data.interests = interests;
+            
+            // Add newsletter preferences
+            const newsletter = [];
+            document.querySelectorAll('input[name="newsletter"]:checked').forEach(checkbox => {
+                newsletter.push(checkbox.value);
+            });
+            data.newsletter = newsletter;
+            
+            console.log('Form Data:', data);
+            
+            // Show success screen
+            document.querySelectorAll('.form-step').forEach(step => step.style.display = 'none');
+            document.getElementById('navigationButtons').style.display = 'none';
+            document.getElementById('successScreen').classList.add('show');
+            
+            // Simulate sending to server
+            // In real application, send to: http://localhost:3000/api/register
+            
+            fetch('http://localhost:3000/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                console.log('Success:', result);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            
+        }
+
+        function showError(errorId) {
+            document.getElementById(errorId).classList.add('show');
+        }
+
+        function hideError(errorId) {
+            document.getElementById(errorId).classList.remove('show');
+        }
+
+        function validateRequired(inputId, errorId) {
+            const input = document.getElementById(inputId);
+            const derivedErrorId = errorId || (inputId + 'Error');
+            if (!input || !input.value || !input.value.trim()) {
+                showError(derivedErrorId);
+                if (input) input.classList.add('error');
+                return false;
+            }
+            hideError(derivedErrorId);
+            input.classList.remove('error');
+            return true;
+        }
+
+        function clearError(errorId, el) {
+            if (errorId) hideError(errorId);
+            if (el) el.classList.remove('error');
+        }
+    </script>
+</body>
+</html>

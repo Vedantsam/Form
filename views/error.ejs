@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+
+<div class="container" style="text-align: center; padding: 60px 40px;">
+    <div style="font-size: 80px; margin-bottom: 20px;">😕</div>
+    <h1 style="color: #dc3545; font-size: 48px; margin-bottom: 10px;"><%= errorCode %></h1>
+    <h2 style="color: #333; margin-bottom: 20px;"><%= title %></h2>
+    <p style="color: #666; font-size: 18px; margin-bottom: 30px;"><%= message %></p>
+    <a href="/" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 30px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600;">
+        Go to Home
+    </a>
+</div>
+
+<%- include('partials/footer') %>
