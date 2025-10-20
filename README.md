@@ -32,8 +32,8 @@ A modern, feature-rich registration form with **5-step navigation**, **real-time
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/advanced-registration-form.git
-cd advanced-registration-form
+git clone https://github.com/Vedantsam/Form.git
+cd Form
 
 # Install dependencies
 npm install express cors ejs
