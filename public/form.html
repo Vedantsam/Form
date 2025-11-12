@@ -1374,10 +1374,9 @@
             document.getElementById('navigationButtons').style.display = 'none';
             document.getElementById('successScreen').classList.add('show');
             
-            // Simulate sending to server
-            // In real application, send to: http://localhost:3000/api/register
-            
-            fetch('http://localhost:3000/api/register', {
+            // Send to server API endpoint
+            // Use relative URL to work with any port/host
+            fetch('/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
